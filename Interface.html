@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Notas CEDERJ</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    h1 {
+      color: #1a73e8;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .calculator {
+      background-color: white;
+      border-radius: 8px;
+      padding: 25px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #555;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #1a73e8;
+      box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+    button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    .calculate-btn {
+      background-color: #1a73e8;
+      color: white;
+    }
+    .calculate-btn:hover {
+      background-color: #0d5bba;
+    }
+    .reset-btn {
+      background-color: #f1f3f4;
+      color: #555;
+    }
+    .reset-btn:hover {
+      background-color: #e0e0e0;
+    }
+    .results {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 8px;
+      display: none;
+    }
+    .success {
+      background-color: #e6f4ea;
+      border-left: 4px solid #34a853;
+    }
+    .warning {
+      background-color: #fef7e0;
+      border-left: 4px solid #f9ab00;
+    }
+    .error {
+      background-color: #fce8e6;
+      border-left: 4px solid #d93025;
+    }
+    .result-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    .result-item {
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .result-label {
+      font-weight: 600;
+    }
+    .explanation {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+      color: #555;
+    }
+    .weights-info {
+      margin-top: 5px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calculadora de Notas CEDERJ</h1>
+  
+  <div class="calculator">
+    <div class="form-group">
+      <label for="pesoAD">Peso das ADs:</label>
+      <select id="pesoAD">
+        <option value="0.2">20% AD / 80% AP</option>
+        <option value="0.25">25% AD / 75% AP</option>
+        <option value="0.3" selected>30% AD / 70% AP</option>
+        <option value="0.35">35% AD / 65% AP</option>
+        <option value="0.4">40% AD / 60% AP</option>
+      </select>
+      <div class="weights-info">Selecione o peso conforme informado na disciplina</div>
+    </div>
+    
+    <div class="form-group">
+      <label for="AD1">Nota AD1 (0-10):</label>
+      <input type="number" id="AD1" min="0" max="10" step="0.1" placeholder="Digite a nota da AD1">
+    </div>
+    
+    <div class="form-group">
+      <label for="AP1">Nota AP1 (0-10):</label>
+      <input type="number" id="AP1" min="0" max="10" step="0.1" placeholder="Digite a nota da AP1">
+    </div>
+    
+    <div class="form-group">
+      <label for="AD2">Nota AD2 (0-10):</label>
+      <input type="number" id="AD2" min="0" max="10" step="0.1" placeholder="Digite a nota da AD2">
+    </div>
+    
+    <div class="form-group">
+      <label for="AP2">Nota AP2 (0-10):</label>
+      <input type="number" id="AP2" min="0" max="10" step="0.1" placeholder="Digite a nota da AP2">
+    </div>
+    
+    <div class="form-group">
+      <label for="AP3">Nota AP3 (0-10) - Opcional:</label>
+      <input type="number" id="AP3" min="0" max="10" step="0.1" placeholder="Digite a nota da AP3 (se fez)">
+    </div>
+    
+    <div class="button-group">
+      <button class="calculate-btn" onclick="calculate()">Calcular Notas</button>
+      <button class="reset-btn" onclick="resetForm()">Limpar</button>
+    </div>
+    
+    <div id="results" class="results">
+      <h3 class="result-title" id="result-title">Resultado</h3>
+      <div class="result-item">
+        <span class="result-label">N1 (AD1 + AP1):</span>
+        <span id="n1-result">-</span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">N2 (AD2 + AP2):</span>
+        <span id="n2-result">-</span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">Média Final:</span>
+        <span id="nf-result">-</span>
+      </div>
+      <div class="result-item">
+        <span class="result-label">Situação:</span>
+        <span id="situation-result">-</span>
+      </div>
+      <div class="explanation" id="explanation">
+        <!-- Explicação será inserida aqui -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function calculate() {
+      // Obter valores dos inputs
+      const pesoAD = parseFloat(document.getElementById('pesoAD').value);
+      const pesoAP = 1 - pesoAD;
+      const AD1 = parseFloat(document.getElementById('AD1').value) || 0;
+      const AP1 = parseFloat(document.getElementById('AP1').value) || 0;
+      const AD2 = parseFloat(document.getElementById('AD2').value) || 0;
+      const AP2 = parseFloat(document.getElementById('AP2').value) || 0;
+      const AP3 = parseFloat(document.getElementById('AP3').value) || 0;
+      
+      // Validar entradas
+      if ([AD1, AP1, AD2, AP2, AP3].some(nota => nota < 0 || nota > 10)) {
+        showError("Todas as notas devem estar entre 0 e 10");
+        return;
+      }
+      
+      // Calcular N1 e N2 com pesos
+      const n1 = (AD1 * pesoAD) + (AP1 * pesoAP);
+      const n2 = (AD2 * pesoAD) + (AP2 * pesoAP);
+      
+      // Calcular média inicial
+      let nf = (n1 + n2) / 2;
+      let situation, explanation;
+      let resultClass = 'success';
+      
+      // Verificar situação
+      if (nf >= 6) {
+        situation = "Aprovado";
+        explanation = `Sua média final é ${nf.toFixed(2)} (≥ 6.0). Você está aprovado!`;
+      } else {
+        if (AP3 > 0) {
+          const maiorN = Math.max(n1, n2);
+          nf = (maiorN + (AP3 * pesoAP)) / 2;
+          
+          if (nf >= 5) {
+            situation = "Aprovado com AP3";
+            explanation = `Sua média final após AP3 é ${nf.toFixed(2)} (≥ 5.0). Você está aprovado!`;
+            resultClass = 'warning';
+          } else {
+            situation = "Reprovado";
+            explanation = `Sua média final após AP3 é ${nf.toFixed(2)} (< 5.0). Infelizmente você não atingiu a média necessária.`;
+            resultClass = 'error';
+          }
+        } else {
+          situation = "Reprovado (pode fazer AP3)";
+          explanation = `Sua média parcial é ${nf.toFixed(2)} (< 6.0). Você pode fazer a AP3 para tentar melhorar sua nota.`;
+          resultClass = 'warning';
+        }
+      }
+      
+      // Exibir resultados
+      document.getElementById('n1-result').textContent = n1.toFixed(2);
+      document.getElementById('n2-result').textContent = n2.toFixed(2);
+      document.getElementById('nf-result').textContent = nf.toFixed(2);
+      document.getElementById('situation-result').textContent = situation;
+      document.getElementById('explanation').innerHTML = explanation;
+      
+      const resultsDiv = document.getElementById('results');
+      resultsDiv.className = `results ${resultClass}`;
+      resultsDiv.style.display = 'block';
+      
+      // Rolagem suave para os resultados
+      resultsDiv.scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function showError(message) {
+      document.getElementById('result-title').textContent = "Erro";
+      document.getElementById('explanation').textContent = message;
+      document.getElementById('results').className = "results error";
+      document.getElementById('results').style.display = 'block';
+      
+      // Esconder outros resultados
+      document.getElementById('n1-result').textContent = '-';
+      document.getElementById('n2-result').textContent = '-';
+      document.getElementById('nf-result').textContent = '-';
+      document.getElementById('situation-result').textContent = '-';
+    }
+    
+    function resetForm() {
+      document.getElementById('AD1').value = '';
+      document.getElementById('AP1').value = '';
+      document.getElementById('AD2').value = '';
+      document.getElementById('AP2').value = '';
+      document.getElementById('AP3').value = '';
+      document.getElementById('pesoAD').value = '0.3';
+      document.getElementById('results').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
